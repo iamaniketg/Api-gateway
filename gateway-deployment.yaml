@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: gateway-service:0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: EUREKA_SERVER_URL
+              value: "http://discovery-server:8761/eureka/"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/application.yml
+              subPath: application.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: gateway-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: backend
+spec:
+  type: LoadBalancer  # Or ClusterIP if using Ingress
+  selector:
+    app: api-gateway
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP

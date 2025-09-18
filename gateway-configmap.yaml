@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: backend
+data:
+  application.yml: |
+    server:
+      port: 8080  # Add this if not already set in your app
+
+    spring:
+      application:
+        name: api-gateway
+      cloud:
+        gateway:
+          mvc:
+            discovery:
+              locator:
+                enabled: true
+                lower-case-service-id: false
+            routes:
+              - id: user-service
+                uri: lb://USER-SERVICE
+                predicates:
+                  - Path=/api/users/**
+
+    eureka:
+      client:
+        enabled: true
+        serviceUrl:
+          defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}

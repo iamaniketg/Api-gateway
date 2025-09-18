@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: user-service
+            uri: http://localhost:8081
+            predicates:
+              - Path=/api/users/**
+
+eureka:
+  client:
+    enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
