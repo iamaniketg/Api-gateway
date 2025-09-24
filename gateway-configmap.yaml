@@ -6,26 +6,36 @@ metadata:
 data:
   application.yml: |
     server:
-      port: 8080  # Add this if not already set in your app
+      port: 8080
 
     spring:
       application:
         name: api-gateway
       cloud:
         gateway:
+          discovery:
+            locator:
+              enabled: true
+              lowerCaseServiceId: true
           mvc:
-            discovery:
-              locator:
-                enabled: true
-                lower-case-service-id: false
             routes:
               - id: user-service
-                uri: lb://USER-SERVICE
+                uri: http://user-service:8081
                 predicates:
                   - Path=/api/users/**
+                filters:
+                  - StripPrefix=0
+
+              - id: security-service
+                uri: http://security-service:8085
+                predicates:
+                  - Path=/api/security/auth/**
+                filters:
+                  - StripPrefix=0
 
     eureka:
       client:
-        enabled: true
         serviceUrl:
           defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+
+# https://github.com/kemanedonfack/springboot-microservices-deployment-kubernetes-helm-gitlabci/tree/main/ecommerce-api-gateway

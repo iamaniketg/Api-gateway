@@ -1,3 +1,25 @@
+#spring:
+#  application:
+#    name: api-gateway
+#  cloud:
+#    gateway:
+#      mvc:
+#        routes:
+#          - id: user-service
+#            uri: http://localhost:8081
+#            predicates:
+#              - Path=/api/users/**
+#          - id: Jwt-Authentication
+#            uri: http://localhost:8085
+#            predicates:
+#              - Path=/auth/**
+#
+#eureka:
+#  client:
+#    enabled: true
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+
 spring:
   application:
     name: api-gateway
@@ -6,9 +28,18 @@ spring:
       mvc:
         routes:
           - id: user-service
-            uri: http://localhost:8081
+            uri: http://user-service:8081
             predicates:
               - Path=/api/users/**
+            filters:
+              - StripPrefix=0
+
+          - id: security-service
+            uri: http://security-service:8085
+            predicates:
+              - Path=/api/security/auth/**
+            filters:
+              - StripPrefix=0
 
 eureka:
   client:

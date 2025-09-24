@@ -5,7 +5,7 @@ COPY . .
 RUN mvn -q -DskipTests clean package
 
 # Step 2: Run
-FROM eclipse-temurin:17-jre-alpine
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENV JAVA_OPTS=""
