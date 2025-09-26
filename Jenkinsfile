@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROJECT_ID = 'thinking-anthem-471805-a1'
-        IMAGE_NAME = "captainaniii/eureka-server"
+        IMAGE_NAME = "captainaniii/gateway-service"
         REGION = 'asia-southeast1'
         ZONE = 'asia-southeast1-a'
         CLUSTER_NAME = 'cluster-1'
@@ -116,9 +116,9 @@ pipeline {
                             export PATH=${WORKSPACE}/google-cloud-sdk/bin:\$PATH
                             gcloud auth activate-service-account --key-file=\$GOOGLE_APPLICATION_CREDENTIALS  // Only if needed; already done earlier
                             kubectl create namespace ${K8S_NAMESPACE} || true
-                            kubectl apply -f eureka-configmap.yaml -n ${K8S_NAMESPACE}
+                            kubectl apply -f gateway-configmap.yaml -n ${K8S_NAMESPACE}
                             kubectl set image deployment/${K8S_DEPLOYMENT} ${K8S_DEPLOYMENT}=${fullImage} -n ${K8S_NAMESPACE}  // Better than sed
-                            kubectl apply -f eureka-deployment.yaml -n ${K8S_NAMESPACE}  // Apply after set image
+                            kubectl apply -f gateway-deployment.yaml -n ${K8S_NAMESPACE}  // Apply after set image
                             kubectl rollout status deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE} --timeout=5m
                         """
                     }
