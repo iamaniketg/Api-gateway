@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROJECT_ID = 'thinking-anthem-471805-a1'  // Your actual project ID
-        IMAGE_NAME = "captainaniii/eureka-server"  // Your Docker Hub repo/image
+        IMAGE_NAME = "captainaniii/gateway-service"  // Your Docker Hub repo/image
         REGION = 'asia-southeast1'  // Your region
         ZONE = 'asia-southeast1-a'  // Your cluster zone
         CLUSTER_NAME = 'cluster-1'  // Your actual cluster name
