@@ -104,6 +104,9 @@ pipeline {
         }
 
         stage('Deploy to GKE') {
+            options {
+                timeout(time: 15, unit: 'MINUTES')  // Overall stage timeout to prevent indefinite hangs
+            }
             steps {
                 withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     script {
@@ -116,7 +119,7 @@ pipeline {
                             sed -i 's|image: .*|image: ${fullImage}|g' gateway-deployment.yaml
                             kubectl apply -f gateway-configmap.yaml
                             kubectl apply -f gateway-deployment.yaml
-                            kubectl rollout status deployment/${K8S_DEPLOYMENT} --namespace=${K8S_NAMESPACE} --timeout=5m
+                            kubectl rollout status deployment/${K8S_DEPLOYMENT} --namespace=${K8S_NAMESPACE}  # Removed --timeout to wait as needed
                         """
                     }
                 }

@@ -42,7 +42,7 @@ metadata:
   name: api-gateway
   namespace: backend
 spec:
-  type: ClusterIP  # Or ClusterIP if using Ingress
+  type: LoadBalancer  # Or ClusterIP if using Ingress
   selector:
     app: api-gateway
   ports:
