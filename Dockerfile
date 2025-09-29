@@ -10,7 +10,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENV JAVA_OPTS=""
 ENV EUREKA_SERVER_URL=http://eureka-server:8761/eureka/
-EXPOSE 8080
+EXPOSE 8181
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
 

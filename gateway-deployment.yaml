@@ -22,7 +22,7 @@ spec:
           image: gateway-service:0.5
           imagePullPolicy: Never
           ports:
-            - containerPort: 8080
+            - containerPort: 8181
           env:
             - name: EUREKA_SERVER_URL
               value: "http://discovery-server:8761/eureka/"
@@ -46,6 +46,6 @@ spec:
   selector:
     app: api-gateway
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8181
+      targetPort: 8181
       protocol: TCP
