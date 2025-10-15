@@ -20,7 +20,7 @@ spec:
       containers:
         - name: api-gateway
           image: api-gateway:latest
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 #          env:
