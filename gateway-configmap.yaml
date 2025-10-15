@@ -1,10 +1,6 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gateway-config
-  namespace: backend
 data:
-  application.yml: |
+  application.yml: |-
     server:
       port: 8080
 
@@ -13,29 +9,54 @@ data:
         name: api-gateway
       cloud:
         gateway:
-          discovery:
-            locator:
-              enabled: true
-              lowerCaseServiceId: true
-          mvc:
-            routes:
-              - id: user-service
-                uri: http://user-service:8081
-                predicates:
-                  - Path=/api/users/**
-                filters:
-                  - StripPrefix=0
+          routes:
+            - id: user-service
+              uri: http://user-service:8081
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '/api/users/(?<segment>.*)'
+                    replacement: /${segment}
 
-              - id: security-service
-                uri: http://security-service:8085
-                predicates:
-                  - Path=/api/security/auth/**
-                filters:
-                  - StripPrefix=0
+            - id: security-service
+              uri: http://security-service:8085
+              predicates:
+                - Path=/auth/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '/auth/(?<segment>.*)'
+                    replacement: /${segment}
 
-    eureka:
-      client:
-        serviceUrl:
-          defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+            - id: jwt-authentication-swagger
+              uri: http://security-service:8085
+              predicates:
+                - Path=/api/v1/security/auth/swagger-ui/**
+                - Path=/api/v1/security/auth/v3/api-docs/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '/api/v1/security/auth/(?<segment>.*)'
+                    replacement: /${segment}
 
-# https://github.com/kemanedonfack/springboot-microservices-deployment-kubernetes-helm-gitlabci/tree/main/ecommerce-api-gateway
+            - id: security-service-actuator
+              uri: http://security-service:8085
+              predicates:
+                - Path=/api/v1/security/auth/actuator/**
+                - Path=/api/v1/security/auth/actuator/prometheus
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '/api/v1/security/auth/actuator/(?<segment>.*)'
+                    replacement: /actuator/${segment}
+
+    logging:
+      level:
+        org.springframework.cloud.gateway: DEBUG
+        org.springframework.web.reactive: DEBUG
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: backend
